@@ -1,0 +1,10 @@
+.freeFlow {
+	width: 100%;
+	height: 100%;
+}
+
+/* `.react-flow__handle` is xyflow's own global class, so it must not be
+   scoped/hashed by CSS modules. */
+.freeFlow :global(.react-flow__handle) {
+	opacity: 0;
+}

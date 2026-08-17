@@ -1,4 +1,5 @@
 import { Background, Controls, ReactFlow } from "@xyflow/react";
+import styles from "./FreeFlow.module.css";
 import "@xyflow/react/dist/style.css";
 
 export type Node = {
@@ -20,7 +21,7 @@ type FreeFlowProps = {
 
 export const FreeFlow = ({ nodes = [], edges = [] }: FreeFlowProps) => {
 	return (
-		<ReactFlow nodes={nodes} edges={edges}>
+		<ReactFlow className={styles["freeFlow"]} nodes={nodes} edges={edges}>
 			<Background />
 			<Controls />
 		</ReactFlow>
