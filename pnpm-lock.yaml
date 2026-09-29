@@ -11,6 +11,9 @@ importers:
       '@xyflow/react':
         specifier: ^12.11.3
         version: 12.11.3(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      elkjs:
+        specifier: ^0.12.0
+        version: 0.12.0
       react:
         specifier: ^19.2.0
         version: 19.2.8
@@ -704,6 +707,9 @@ packages:
     peerDependenciesMeta:
       oxc-resolver:
         optional: true
+
+  elkjs@0.12.0:
+    resolution: {integrity: sha512-YZcKynxVxYoKIOEpywEPwCFdg+BTbxQRNf3pbwdDCvc8O3kQD8bmIwSxKU1eOTVc4Xo+VG9Te+575mlfvOrhEQ==}
 
   empathic@2.0.1:
     resolution: {integrity: sha512-YGRs8knHhKHVShLkFET/rWAU8kmHbOV5LwN938RHI0pljAJ1Gf6SzXsSmRaEzcXTtOOmVqJ5+WtQPL5uigY50Q==}
@@ -1643,6 +1649,8 @@ snapshots:
   detect-libc@2.1.2: {}
 
   dts-resolver@3.0.0: {}
+
+  elkjs@0.12.0: {}
 
   empathic@2.0.1: {}
 

@@ -1,17 +1,20 @@
-import { Edge, FreeFlow, Node } from "../../src";
+import { type Edge, FreeFlow } from "../../src";
 
-const initialNodes: Node[] = [
+const initialNodes = [
 	{
 		id: "n1",
+		type: "rectangle" as const,
 		position: { x: 0, y: 0 },
-		data: { label: "Node 1" },
+		data: {},
 	},
 	{
 		id: "n2",
+		type: "rectangle" as const,
 		position: { x: 100, y: 100 },
-		data: { label: "Node 2" },
+		data: {},
 	},
 ];
+
 const initialEdges: Edge[] = [
 	{
 		id: "n1-n2",

@@ -1,29 +1,50 @@
-import { Background, Controls, ReactFlow } from "@xyflow/react";
+import {
+	Background,
+	Controls,
+	ReactFlow,
+	type Node,
+	ReactFlowProvider,
+	type Edge,
+} from "@xyflow/react";
 import styles from "./FreeFlow.module.css";
 import "@xyflow/react/dist/style.css";
-
-export type Node = {
-	id: string;
-	position: { x: number; y: number };
-	data: { label: string };
-};
-
-export type Edge = {
-	id: string;
-	source: string;
-	target: string;
-};
+import { NODE_TYPES } from "./nodes";
+import type { EdgeType, NodeType } from "./types/FreeFlow";
+import { useMemo } from "react";
 
 type FreeFlowProps = {
-	nodes?: Node[];
-	edges?: Edge[];
+	nodes: NodeType[];
+	edges: EdgeType[];
 };
 
-export const FreeFlow = ({ nodes = [], edges = [] }: FreeFlowProps) => {
+const InnerFlow = ({ nodes, edges }: FreeFlowProps) => {
+	const initialNodes: Node[] = useMemo(
+		() => nodes.map((node) => ({ ...node, data: {} }) satisfies Node),
+		[nodes],
+	);
+
+	const initialEdges: Edge[] = useMemo(
+		() => edges.map((edge) => ({ ...edge, data: {} }) satisfies Edge),
+		[edges],
+	);
+
 	return (
-		<ReactFlow className={styles["freeFlow"]} nodes={nodes} edges={edges}>
+		<ReactFlow
+			className={styles["freeFlow"]}
+			nodeTypes={NODE_TYPES}
+			nodes={initialNodes}
+			edges={initialEdges}
+		>
 			<Background />
 			<Controls />
 		</ReactFlow>
+	);
+};
+
+export const FreeFlow = (props: FreeFlowProps) => {
+	return (
+		<ReactFlowProvider>
+			<InnerFlow {...props} />
+		</ReactFlowProvider>
 	);
 };

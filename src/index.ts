@@ -1,1 +1,2 @@
-export { type Edge, FreeFlow, type Node } from "./FreeFlow";
+export type { Edge } from "@xyflow/react";
+export { FreeFlow } from "./FreeFlow";
