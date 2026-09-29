@@ -1,4 +1,4 @@
-import { useReactFlow } from "@xyflow/react";
+import { useNodesInitialized, useReactFlow } from "@xyflow/react";
 import { elkLayout } from "./engines/elk";
 import { useCallback, useEffect } from "react";
 
@@ -12,7 +12,8 @@ type UseLayoutProps = {
 };
 
 export const useLayout = ({ engine, layoutOptions }: UseLayoutProps) => {
-	const { getNodes, getEdges } = useReactFlow();
+	const { getNodes, getEdges, setNodes, setEdges } = useReactFlow();
+	const nodesInitialized = useNodesInitialized();
 
 	const layoutFunction = LAYOUT_ENGINE_MAP[engine];
 
@@ -21,5 +22,12 @@ export const useLayout = ({ engine, layoutOptions }: UseLayoutProps) => {
 		const edges = getEdges();
 
 		const result = await layoutFunction(nodes, edges, layoutOptions);
-	}, []);
+
+		setNodes(result.nodes);
+		setEdges(result.edges ?? edges);
+	}, [layoutFunction, layoutOptions]);
+
+	useEffect(() => {
+		if (nodesInitialized) layout();
+	}, [nodesInitialized, layout]);
 };

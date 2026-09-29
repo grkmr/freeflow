@@ -2,38 +2,52 @@ import {
 	Background,
 	Controls,
 	ReactFlow,
-	type Node,
 	ReactFlowProvider,
 	type Edge,
+	type EdgeTypes,
 } from "@xyflow/react";
 import styles from "./FreeFlow.module.css";
 import "@xyflow/react/dist/style.css";
-import { NODE_TYPES } from "./nodes";
-import type { EdgeType, NodeType } from "./types/FreeFlow";
-import { useMemo } from "react";
+import type { EdgeType } from "./types/FreeFlow";
+import { useMemo, type ComponentProps } from "react";
+import { useLayout } from "./hooks/useLayout";
+import { DEFAULT_LAYOUT_OPTIONS } from "./hooks/useLayout/config";
+import { LayoutEdge, type LayoutEdgeType } from "./edges/edge";
 
 type FreeFlowProps = {
-	nodes: NodeType[];
 	edges: EdgeType[];
-};
+	layoutOptions?: Record<string, string> | undefined;
+} & Omit<
+	ComponentProps<typeof ReactFlow>,
+	"edges" | "defaultEdges" | "nodesDraggable" | "edgeTypes"
+>;
 
-const InnerFlow = ({ nodes, edges }: FreeFlowProps) => {
-	const initialNodes: Node[] = useMemo(
-		() => nodes.map((node) => ({ ...node, data: {} }) satisfies Node),
-		[nodes],
-	);
+const EdgeTypes = {
+	layout: LayoutEdge,
+} as const satisfies EdgeTypes;
 
+const InnerFlow = ({
+	edges,
+	layoutOptions = DEFAULT_LAYOUT_OPTIONS,
+	...props
+}: FreeFlowProps) => {
 	const initialEdges: Edge[] = useMemo(
-		() => edges.map((edge) => ({ ...edge, data: {} }) satisfies Edge),
+		() =>
+			edges.map(
+				(edge) => ({ ...edge, type: "layout" }) satisfies LayoutEdgeType,
+			),
 		[edges],
 	);
+
+	useLayout({ engine: "elk", layoutOptions });
 
 	return (
 		<ReactFlow
 			className={styles["freeFlow"]}
-			nodeTypes={NODE_TYPES}
-			nodes={initialNodes}
-			edges={initialEdges}
+			nodesDraggable={false}
+			edgeTypes={EdgeTypes}
+			defaultEdges={initialEdges}
+			{...props}
 		>
 			<Background />
 			<Controls />
