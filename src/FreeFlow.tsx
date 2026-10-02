@@ -1,41 +1,59 @@
 import {
 	Background,
 	Controls,
-	ReactFlow,
-	ReactFlowProvider,
 	type Edge,
 	type EdgeTypes,
+	ReactFlow,
+	ReactFlowProvider,
 } from "@xyflow/react";
 import styles from "./FreeFlow.module.css";
 import "@xyflow/react/dist/style.css";
-import type { EdgeType } from "./types/FreeFlow";
-import { useMemo, type ComponentProps } from "react";
+import { type ComponentProps, useMemo } from "react";
+import { LayoutEdge, type LayoutEdgeType } from "./edges/edge";
+import { EdgeMarkerDefinitions } from "./edges/markers";
 import { useLayout } from "./hooks/useLayout";
 import { DEFAULT_LAYOUT_OPTIONS } from "./hooks/useLayout/config";
-import { LayoutEdge, type LayoutEdgeType } from "./edges/edge";
+import type { EdgeType, FreeFlowNode } from "./types/FreeFlow";
 
 type FreeFlowProps = {
 	edges: EdgeType[];
 	layoutOptions?: Record<string, string> | undefined;
+	defaultNodes?: FreeFlowNode[] | undefined;
 } & Omit<
 	ComponentProps<typeof ReactFlow>,
-	"edges" | "defaultEdges" | "nodesDraggable" | "edgeTypes"
+	| "edges"
+	| "defaultEdges"
+	| "nodes"
+	| "defaultNodes"
+	| "nodesDraggable"
+	| "edgeTypes"
 >;
 
-const EdgeTypes = {
+const EDGE_TYPES = {
 	layout: LayoutEdge,
 } as const satisfies EdgeTypes;
 
 const InnerFlow = ({
 	edges,
 	layoutOptions = DEFAULT_LAYOUT_OPTIONS,
+	defaultNodes,
 	...props
 }: FreeFlowProps) => {
 	const initialEdges: Edge[] = useMemo(
 		() =>
-			edges.map(
-				(edge) => ({ ...edge, type: "layout" }) satisfies LayoutEdgeType,
-			),
+			edges.map((original) => {
+				const { startLabel, endLabel, onClick, clickIcon, ...edge } = original;
+				return {
+					...edge,
+					type: "layout",
+					data: {
+						startLabel,
+						endLabel,
+						onClick: onClick && ((event) => onClick(original, event)),
+						clickIcon,
+					},
+				} satisfies LayoutEdgeType;
+			}),
 		[edges],
 	);
 
@@ -45,10 +63,12 @@ const InnerFlow = ({
 		<ReactFlow
 			className={styles["freeFlow"]}
 			nodesDraggable={false}
-			edgeTypes={EdgeTypes}
+			edgeTypes={EDGE_TYPES}
+			{...(defaultNodes && { defaultNodes })}
 			defaultEdges={initialEdges}
 			{...props}
 		>
+			<EdgeMarkerDefinitions />
 			<Background />
 			<Controls />
 		</ReactFlow>

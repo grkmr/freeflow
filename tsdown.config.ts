@@ -4,7 +4,8 @@ export default defineConfig({
 	platform: "neutral",
 	dts: true,
 	exports: true,
+	noExternal: ["@xyflow/react/dist/style.css"],
 	css: {
-		inject: true,
+		inject: false,
 	},
 });

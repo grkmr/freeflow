@@ -1,17 +1,26 @@
 {
-	"name": "react-components-starter",
+	"name": "@grkmr/freeflow",
 	"type": "module",
 	"version": "0.0.0",
-	"description": "A starter for creating a React component library.",
-	"author": "Author Name <author.name@mail.com>",
+	"description": "React Flow graphs laid out automatically with ELK: routed edges, labels, markers and clickable edges.",
+	"keywords": [
+		"react",
+		"react-flow",
+		"xyflow",
+		"elk",
+		"graph",
+		"layout",
+		"diagram"
+	],
+	"author": "grkmr",
 	"license": "MIT",
-	"homepage": "https://github.com/author/library#readme",
+	"homepage": "https://github.com/grkmr/freeflow#readme",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/author/library.git"
+		"url": "git+https://github.com/grkmr/freeflow.git"
 	},
 	"bugs": {
-		"url": "https://github.com/author/library/issues"
+		"url": "https://github.com/grkmr/freeflow/issues"
 	},
 	"exports": {
 		".": "./dist/index.js",
@@ -56,5 +65,8 @@
 		"@xyflow/react": "^12.11.3",
 		"elkjs": "^0.12.0"
 	},
-	"packageManager": "pnpm@11.22.0+sha512.1ff870c4c6133dfd88fb2afc46dd13d47f09c9794b438c6fdb47ca98caf3bc16381ee0be93a091b8e3824cf01f889f46d7d9e20910fb0be1ab0fb5baa80dd621"
+	"packageManager": "pnpm@11.22.0+sha512.1ff870c4c6133dfd88fb2afc46dd13d47f09c9794b438c6fdb47ca98caf3bc16381ee0be93a091b8e3824cf01f889f46d7d9e20910fb0be1ab0fb5baa80dd621",
+	"inlinedDependencies": {
+		"@xyflow/react": "12.11.3"
+	}
 }
