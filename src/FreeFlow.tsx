@@ -1,7 +1,6 @@
 import {
 	Background,
 	Controls,
-	type Edge,
 	type EdgeTypes,
 	ReactFlow,
 	ReactFlowProvider,
@@ -18,7 +17,7 @@ import type { EdgeType, FreeFlowNode } from "./types/FreeFlow";
 type FreeFlowProps = {
 	edges: EdgeType[];
 	layoutOptions?: Record<string, string> | undefined;
-	defaultNodes?: FreeFlowNode[] | undefined;
+	nodes: FreeFlowNode[];
 } & Omit<
 	ComponentProps<typeof ReactFlow>,
 	| "edges"
@@ -36,10 +35,10 @@ const EDGE_TYPES = {
 const InnerFlow = ({
 	edges,
 	layoutOptions = DEFAULT_LAYOUT_OPTIONS,
-	defaultNodes,
+	nodes,
 	...props
 }: FreeFlowProps) => {
-	const initialEdges: Edge[] = useMemo(
+	const layoutEdges: LayoutEdgeType[] = useMemo(
 		() =>
 			edges.map((original) => {
 				const { startLabel, endLabel, onClick, clickIcon, ...edge } = original;
@@ -57,15 +56,15 @@ const InnerFlow = ({
 		[edges],
 	);
 
-	useLayout({ engine: "elk", layoutOptions });
+	useLayout({ engine: "elk", nodes, edges: layoutEdges, layoutOptions });
 
 	return (
 		<ReactFlow
 			className={styles["freeFlow"]}
 			nodesDraggable={false}
 			edgeTypes={EDGE_TYPES}
-			{...(defaultNodes && { defaultNodes })}
-			defaultEdges={initialEdges}
+			defaultNodes={nodes}
+			defaultEdges={layoutEdges}
 			{...props}
 		>
 			<EdgeMarkerDefinitions />

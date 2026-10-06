@@ -67,12 +67,12 @@ const edges: EdgeType[] = [
 
 export const App = () => (
 	<div style={{ height: "100vh" }}>
-		<FreeFlow defaultNodes={nodes} edges={edges} nodeTypes={nodeTypes} />
+		<FreeFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} />
 	</div>
 );
 ```
 
-Positions are set by the layout, so `{ x: 0, y: 0 }` is fine. Define `nodeTypes` and `layoutOptions` outside your component: a new object on every render starts a new layout.
+Positions are set by the layout, so `{ x: 0, y: 0 }` is fine. Define `nodeTypes` and `layoutOptions` outside your component, and keep `edges` stable (e.g. with `useMemo`): a new object on every render starts a new layout. Changing `nodes` or `edges` lays the graph out again, so you can add, remove or change them without remounting.
 
 ## Nodes
 
@@ -106,7 +106,7 @@ const layoutOptions = {
 	"elk.edgeRouting": "ORTHOGONAL",
 };
 
-<FreeFlow layoutOptions={layoutOptions} defaultNodes={nodes} edges={edges} />;
+<FreeFlow layoutOptions={layoutOptions} nodes={nodes} edges={edges} />;
 ```
 
 `elk.edgeRouting` can be `SPLINES`, `ORTHOGONAL` or `POLYLINE`. The `layered` algorithm also places the labels and makes room for them.

@@ -171,7 +171,7 @@ export function App() {
 			</div>
 			<FreeFlow
 				key={graph}
-				defaultNodes={nodes}
+				nodes={nodes}
 				nodeTypes={NODE_TYPES}
 				edges={edges}
 				layoutOptions={LAYOUT_PRESETS[preset]}

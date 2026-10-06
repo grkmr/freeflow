@@ -1,5 +1,5 @@
-import { useNodesInitialized, useReactFlow } from "@xyflow/react";
-import { useCallback, useEffect } from "react";
+import { type Node, useNodesInitialized, useReactFlow } from "@xyflow/react";
+import { useEffect } from "react";
 import type { LayoutEdgeType } from "../../edges/edge";
 import { clipEdgesToShapes } from "./clipToShape";
 import { elkLayout } from "./engines/elk";
@@ -10,27 +10,61 @@ const LAYOUT_ENGINE_MAP = {
 
 type UseLayoutProps = {
 	engine: keyof typeof LAYOUT_ENGINE_MAP;
+	nodes: Node[];
+	edges: LayoutEdgeType[];
 	layoutOptions?: Record<string, string> | undefined;
 };
 
-export const useLayout = ({ engine, layoutOptions }: UseLayoutProps) => {
-	const { getNodes, getEdges, setNodes, setEdges } = useReactFlow();
+export const useLayout = ({
+	engine,
+	nodes,
+	edges,
+	layoutOptions,
+}: UseLayoutProps) => {
+	const { getNodes, setNodes, setEdges } = useReactFlow();
 	const nodesInitialized = useNodesInitialized();
 
 	const layoutFunction = LAYOUT_ENGINE_MAP[engine];
 
-	const layout = useCallback(async () => {
-		const result = await layoutFunction(
-			getNodes(),
-			getEdges() as LayoutEdgeType[],
-			layoutOptions,
-		);
-
-		setNodes(result.nodes);
-		setEdges(clipEdgesToShapes(result.edges, result.nodes));
-	}, [layoutFunction, layoutOptions, getNodes, getEdges, setNodes, setEdges]);
-
 	useEffect(() => {
-		if (nodesInitialized) layout();
-	}, [nodesInitialized, layout]);
+		if (!nodesInitialized) return;
+
+		const current = new Map(getNodes().map((node) => [node.id, node]));
+		const merged = nodes.map((node) => {
+			const previous = current.get(node.id);
+			return previous
+				? {
+						...node,
+						position: previous.position,
+						...(previous.measured && { measured: previous.measured }),
+					}
+				: node;
+		});
+
+		if (merged.some((node) => node.measured?.width === undefined)) {
+			setNodes(merged);
+			return;
+		}
+
+		let cancelled = false;
+
+		layoutFunction(merged, edges, layoutOptions).then((result) => {
+			if (cancelled) return;
+			setNodes(result.nodes);
+			setEdges(clipEdgesToShapes(result.edges, result.nodes));
+		});
+
+		return () => {
+			cancelled = true;
+		};
+	}, [
+		nodesInitialized,
+		layoutFunction,
+		nodes,
+		edges,
+		layoutOptions,
+		getNodes,
+		setNodes,
+		setEdges,
+	]);
 };
