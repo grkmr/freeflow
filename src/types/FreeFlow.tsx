@@ -25,14 +25,16 @@ export type NodeShape = "rectangle" | "circle";
 
 type NodeData = Record<string, unknown>;
 
+type NodeLayout = { layoutOptions?: Record<string, string> | undefined };
+
 export type RectangleNode<
 	Data extends NodeData = NodeData,
 	Type extends string | undefined = string | undefined,
-> = Node<Data & { shape: "rectangle" }, Type>;
+> = Node<Data & { shape: "rectangle" }, Type> & NodeLayout;
 
 export type CircleNode<
 	Data extends NodeData = NodeData,
 	Type extends string | undefined = string | undefined,
-> = Node<Data & { shape: "circle" }, Type>;
+> = Node<Data & { shape: "circle" }, Type> & NodeLayout;
 
 export type FreeFlowNode = RectangleNode | CircleNode;

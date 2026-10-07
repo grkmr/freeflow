@@ -9,6 +9,7 @@ import {
 } from "../../../edges/edge";
 import { measureCenterLabel, measureLabel } from "../../../edges/labels";
 import { isEdgeRouting } from "../../../edges/paths";
+import type { FreeFlowNode } from "../../../types/FreeFlow";
 
 const elk = new ELK();
 
@@ -61,11 +62,14 @@ export const elkLayout = async (
 	const graph: ElkNode = {
 		id: "root",
 		layoutOptions,
-		children: nodes.map(({ id, measured }) => ({
-			id,
-			width: measured?.width ?? 0,
-			height: measured?.height ?? 0,
-		})),
+		children: (nodes as FreeFlowNode[]).map(
+			({ id, measured, layoutOptions }) => ({
+				id,
+				width: measured?.width ?? 0,
+				height: measured?.height ?? 0,
+				...(layoutOptions && { layoutOptions }),
+			}),
+		),
 		edges: edges.map((edge) => ({
 			id: edge.id,
 			sources: [edge.source],
