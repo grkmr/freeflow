@@ -1,5 +1,10 @@
-import { type Node, useNodesInitialized, useReactFlow } from "@xyflow/react";
-import { useEffect } from "react";
+import {
+	type FitViewOptions,
+	type Node,
+	useNodesInitialized,
+	useReactFlow,
+} from "@xyflow/react";
+import { useEffect, useRef } from "react";
 import type { LayoutEdgeType } from "../../edges/edge";
 import { clipEdgesToShapes } from "./clipToShape";
 import { elkLayout } from "./engines/elk";
@@ -13,6 +18,10 @@ type UseLayoutProps = {
 	nodes: Node[];
 	edges: LayoutEdgeType[];
 	layoutOptions?: Record<string, string> | undefined;
+	// Fits the view once a layout is applied; the nodes only get their
+	// positions then, so React Flow's own initial fitView sees them at (0, 0).
+	fitView?: boolean | undefined;
+	fitViewOptions?: FitViewOptions | undefined;
 };
 
 export const useLayout = ({
@@ -20,11 +29,16 @@ export const useLayout = ({
 	nodes,
 	edges,
 	layoutOptions,
+	fitView,
+	fitViewOptions,
 }: UseLayoutProps) => {
-	const { getNodes, setNodes, setEdges } = useReactFlow();
+	const { getNodes, setNodes, setEdges, fitView: fitViewport } = useReactFlow();
 	const nodesInitialized = useNodesInitialized();
 
 	const layoutFunction = LAYOUT_ENGINE_MAP[engine];
+
+	const fitViewRef = useRef({ fitView, fitViewOptions });
+	fitViewRef.current = { fitView, fitViewOptions };
 
 	useEffect(() => {
 		if (!nodesInitialized) return;
@@ -52,6 +66,8 @@ export const useLayout = ({
 			if (cancelled) return;
 			setNodes(result.nodes);
 			setEdges(clipEdgesToShapes(result.edges, result.nodes));
+			const { fitView, fitViewOptions } = fitViewRef.current;
+			if (fitView) fitViewport(fitViewOptions);
 		});
 
 		return () => {
@@ -66,5 +82,6 @@ export const useLayout = ({
 		getNodes,
 		setNodes,
 		setEdges,
+		fitViewport,
 	]);
 };

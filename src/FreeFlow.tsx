@@ -36,6 +36,8 @@ const InnerFlow = ({
 	edges,
 	layoutOptions = DEFAULT_LAYOUT_OPTIONS,
 	nodes,
+	fitView,
+	fitViewOptions,
 	...props
 }: FreeFlowProps) => {
 	const layoutEdges: LayoutEdgeType[] = useMemo(
@@ -56,7 +58,14 @@ const InnerFlow = ({
 		[edges],
 	);
 
-	useLayout({ engine: "elk", nodes, edges: layoutEdges, layoutOptions });
+	useLayout({
+		engine: "elk",
+		nodes,
+		edges: layoutEdges,
+		layoutOptions,
+		fitView,
+		fitViewOptions,
+	});
 
 	return (
 		<ReactFlow
